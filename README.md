@@ -39,7 +39,19 @@ See [docs/stack_decision.md](docs/stack_decision.md) for rationale.
 ```
 backend/           Python backend (FastAPI + scoring engine)
   src/peakwise/    Application source
-  tests/           Test suite
+    models.py      SQLAlchemy warehouse models (10 tables)
+    db.py          Database session factory
+    ingestion/     CSV parsers and normalization pipeline
+      garmin.py    Garmin daily + activities importer
+      apple_health.py  Apple Health daily importer
+      strava.py    Strava importer (normalized + native export)
+      scale.py     Scale measurements importer
+      manual.py    Manual input importer
+      normalize.py Multi-source merging, coverage, lineage
+      dedup.py     Cross-source workout deduplication
+      pipeline.py  Orchestrator: parse → normalize → persist
+  alembic/         Database migrations
+  tests/           Test suite (49 tests)
 frontend/          Next.js frontend
 docs/              Design documents and specifications
 ```
@@ -62,6 +74,19 @@ npm run dev
 ```
 
 Copy `.env.example` to `.env` and fill in the required values before running.
+
+## Progress
+
+- [x] Phase 0 — Repository and planning
+- [x] Phase 1 — Warehouse foundation (models, migrations, validation)
+- [x] Phase 2 — Ingestion layer (5 sources, normalization, dedup)
+- [ ] Phase 3 — Feature engineering
+- [ ] Phase 4 — Scoring engine
+- [ ] Phase 5 — Recommendation engine
+- [ ] Phase 6 — API contracts
+- [ ] Phase 7 — Frontend MVP
+- [ ] Phase 8 — LLM layer
+- [ ] Phase 9 — Feedback loop
 
 ## Documentation
 

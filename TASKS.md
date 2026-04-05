@@ -30,14 +30,14 @@ A repo with clear docs, tooling, and a stable implementation target.
 ## Phase 1 - Warehouse foundation
 
 ### Database
-- [ ] Set up database project
-- [ ] Create migrations for `daily_fact`
-- [ ] Create migrations for `workout_fact`
-- [ ] Create migrations for `manual_daily_input`
-- [ ] Create migrations for `daily_source_coverage`
-- [ ] Create migrations for `daily_features`
-- [ ] Create migrations for `score_snapshot`
-- [ ] Create migrations for `recommendation_snapshot`
+- [x] Set up database project
+- [x] Create migrations for `daily_fact`
+- [x] Create migrations for `workout_fact`
+- [x] Create migrations for `manual_daily_input`
+- [x] Create migrations for `daily_source_coverage`
+- [x] Create migrations for `daily_features`
+- [x] Create migrations for `score_snapshot`
+- [x] Create migrations for `recommendation_snapshot`
 
 ### Seed and fixture data
 - [ ] Create seed file for daily metrics
@@ -46,9 +46,9 @@ A repo with clear docs, tooling, and a stable implementation target.
 - [ ] Create seed script to populate local database
 
 ### Validation
-- [ ] Add schema validation for inbound records
-- [ ] Add source lineage fields
-- [ ] Add data quality flags
+- [x] Add schema validation for inbound records
+- [x] Add source lineage fields
+- [x] Add data quality flags
 - [ ] Add tests for warehouse writes
 
 ### Deliverable
@@ -59,17 +59,17 @@ A local database containing realistic seeded historical data.
 ## Phase 2 - Ingestion layer
 
 ### File-based ingestion first
-- [ ] Implement Garmin import from export format or normalized CSV
-- [ ] Implement Apple Health import from export format or normalized CSV
-- [ ] Implement Strava import from export format or normalized CSV
-- [ ] Implement scale import from CSV
-- [ ] Implement manual input import and form handling
+- [x] Implement Garmin import from export format or normalized CSV
+- [x] Implement Apple Health import from export format or normalized CSV
+- [x] Implement Strava import from export format or normalized CSV
+- [x] Implement scale import from CSV
+- [x] Implement manual input import and form handling
 
 ### Normalization
-- [ ] Map imported data into source-agnostic warehouse records
-- [ ] Deduplicate duplicate workout records across sources if needed
-- [ ] Mark partial or missing days explicitly
-- [ ] Log ingestion errors and skipped rows
+- [x] Map imported data into source-agnostic warehouse records
+- [x] Deduplicate duplicate workout records across sources if needed
+- [x] Mark partial or missing days explicitly
+- [x] Log ingestion errors and skipped rows
 
 ### Deliverable
 A repeatable ingestion pipeline that can rebuild the warehouse from exported data.
