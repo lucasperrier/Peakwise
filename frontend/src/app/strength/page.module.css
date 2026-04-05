@@ -1,0 +1,94 @@
+.loading,
+.error {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.error {
+  color: var(--color-red);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.625rem;
+  margin-top: 0.5rem;
+}
+
+/* Workout timeline */
+.workoutSection {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.sectionTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+
+.workoutList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.workoutItem {
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s;
+}
+
+.workoutItem:hover {
+  border-color: var(--color-muted);
+}
+
+.workoutDate {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.workoutInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.workoutType {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  text-transform: capitalize;
+}
+
+.workoutDetail {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}
+
+.lowerBodyTag {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-orange-bg);
+  color: var(--color-orange);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.workoutNotes {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin: 0.375rem 0 0;
+  line-height: 1.4;
+}

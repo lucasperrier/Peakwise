@@ -1,0 +1,24 @@
+.wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-red-bg);
+  color: var(--color-red);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  animation: fadeIn 0.3s ease;
+}
+
+.badge::before {
+  content: "⚠";
+  font-size: 0.6875rem;
+}

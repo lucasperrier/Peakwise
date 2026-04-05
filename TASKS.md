@@ -40,16 +40,16 @@ A repo with clear docs, tooling, and a stable implementation target.
 - [x] Create migrations for `recommendation_snapshot`
 
 ### Seed and fixture data
-- [ ] Create seed file for daily metrics
-- [ ] Create seed file for workouts
-- [ ] Create seed file for manual inputs
-- [ ] Create seed script to populate local database
+- [x] Create seed file for daily metrics
+- [x] Create seed file for workouts
+- [x] Create seed file for manual inputs
+- [x] Create seed script to populate local database
 
 ### Validation
 - [x] Add schema validation for inbound records
 - [x] Add source lineage fields
 - [x] Add data quality flags
-- [ ] Add tests for warehouse writes
+- [x] Add tests for warehouse writes
 
 ### Deliverable
 A local database containing realistic seeded historical data.
@@ -79,31 +79,31 @@ A repeatable ingestion pipeline that can rebuild the warehouse from exported dat
 ## Phase 3 - Feature engineering
 
 ### Daily features
-- [ ] Compute 7-day rolling averages
-- [ ] Compute 28-day baseline deviations
-- [ ] Compute 90-day baseline features where relevant
-- [ ] Compute sleep debt
-- [ ] Compute body-weight slope
-- [ ] Compute recovery trend
-- [ ] Compute steps consistency
-- [ ] Compute mood and stress trends
+- [x] Compute 7-day rolling averages
+- [x] Compute 28-day baseline deviations
+- [x] Compute 90-day baseline features where relevant
+- [x] Compute sleep debt
+- [x] Compute body-weight slope
+- [x] Compute recovery trend
+- [x] Compute steps consistency
+- [x] Compute mood and stress trends
 
 ### Running features
-- [ ] Compute weekly km
-- [ ] Compute rolling 4-week km
-- [ ] Compute longest run in last 7 days
-- [ ] Compute easy-run efficiency at fixed HR band
-- [ ] Compute quality-session completion counts
-- [ ] Compute projected HM time placeholder logic
-- [ ] Compute plan adherence placeholder logic
+- [x] Compute weekly km
+- [x] Compute rolling 4-week km
+- [x] Compute longest run in last 7 days
+- [x] Compute easy-run efficiency at fixed HR band
+- [x] Compute quality-session completion counts
+- [x] Compute projected HM time placeholder logic
+- [x] Compute plan adherence placeholder logic
 
 ### Hybrid features
-- [ ] Parse CrossFit notes into tags where available
-- [ ] Compute lower-body CrossFit density
-- [ ] Compute hard-day density
-- [ ] Compute session spacing quality
-- [ ] Compute interference risk score inputs
-- [ ] Compute long-run protection score inputs
+- [x] Parse CrossFit notes into tags where available
+- [x] Compute lower-body CrossFit density
+- [x] Compute hard-day density
+- [x] Compute session spacing quality
+- [x] Compute interference risk score inputs
+- [x] Compute long-run protection score inputs
 
 ### Deliverable
 A populated `daily_features` layer that supports deterministic scoring.
@@ -113,32 +113,32 @@ A populated `daily_features` layer that supports deterministic scoring.
 ## Phase 4 - Scoring engine
 
 ### Recovery score
-- [ ] Implement recovery score formula
-- [ ] Persist recovery subcomponents
-- [ ] Add tests for high, medium, low readiness days
+- [x] Implement recovery score formula
+- [x] Persist recovery subcomponents
+- [x] Add tests for high, medium, low readiness days
 
 ### Race-readiness score
-- [ ] Implement race-readiness formula
-- [ ] Persist race-readiness subcomponents
-- [ ] Add tests for on-track vs off-track scenarios
+- [x] Implement race-readiness formula
+- [x] Persist race-readiness subcomponents
+- [x] Add tests for on-track vs off-track scenarios
 
 ### General-health score
-- [ ] Implement general-health formula
-- [ ] Persist general-health subcomponents
-- [ ] Add tests for stable vs drifting health scenarios
+- [x] Implement general-health formula
+- [x] Persist general-health subcomponents
+- [x] Add tests for stable vs drifting health scenarios
 
 ### Load-balance score
-- [ ] Implement load-balance formula
-- [ ] Persist load-balance subcomponents
-- [ ] Add tests for balanced vs interference-heavy weeks
+- [x] Implement load-balance formula
+- [x] Persist load-balance subcomponents
+- [x] Add tests for balanced vs interference-heavy weeks
 
 ### Warning logic
-- [ ] Implement knee pain warning
-- [ ] Implement illness warning
-- [ ] Implement sleep debt warning
-- [ ] Implement HRV suppression warning
-- [ ] Implement overload warning
-- [ ] Add tests for warning triggers
+- [x] Implement knee pain warning
+- [x] Implement illness warning
+- [x] Implement sleep debt warning
+- [x] Implement HRV suppression warning
+- [x] Implement overload warning
+- [x] Add tests for warning triggers
 
 ### Deliverable
 A deterministic score engine with persisted outputs and test coverage.
@@ -146,13 +146,13 @@ A deterministic score engine with persisted outputs and test coverage.
 ---
 
 ## Phase 5 - Recommendation engine
-- [ ] Define recommendation rule config
-- [ ] Implement mapping from scores and warnings to recommendation mode
-- [ ] Implement mapping from recommendation mode to suggested action
-- [ ] Add reason codes
-- [ ] Add next-best alternative output
-- [ ] Persist recommendation snapshots
-- [ ] Add unit tests for recommendation outcomes
+- [x] Define recommendation rule config
+- [x] Implement mapping from scores and warnings to recommendation mode
+- [x] Implement mapping from recommendation mode to suggested action
+- [x] Add reason codes
+- [x] Add next-best alternative output
+- [x] Persist recommendation snapshots
+- [x] Add unit tests for recommendation outcomes
 
 ### Deliverable
 The backend can answer: what should I do today, and why?
@@ -160,14 +160,14 @@ The backend can answer: what should I do today, and why?
 ---
 
 ## Phase 6 - API contracts
-- [ ] Create `GET /api/today`
-- [ ] Create `GET /api/running`
-- [ ] Create `GET /api/health`
-- [ ] Create `GET /api/strength`
-- [ ] Create `GET /api/weekly-review`
-- [ ] Create `POST /api/manual-input`
-- [ ] Define typed response payloads
-- [ ] Add contract tests
+- [x] Create `GET /api/today`
+- [x] Create `GET /api/running`
+- [x] Create `GET /api/health`
+- [x] Create `GET /api/strength`
+- [x] Create `GET /api/weekly-review`
+- [x] Create `POST /api/manual-input`
+- [x] Define typed response payloads
+- [x] Add contract tests
 
 ### Deliverable
 Stable application endpoints ready for the frontend.
@@ -177,18 +177,18 @@ Stable application endpoints ready for the frontend.
 ## Phase 7 - Frontend MVP
 
 ### Today page
-- [ ] Build Today recommendation card
-- [ ] Build Recovery card
-- [ ] Build Half-marathon card
-- [ ] Build Health card
-- [ ] Build Training-balance card
-- [ ] Build short explanation panel
+- [x] Build Today recommendation card
+- [x] Build Recovery card
+- [x] Build Half-marathon card
+- [x] Build Health card
+- [x] Build Training-balance card
+- [x] Build short explanation panel
 
 ### Trend views
-- [ ] Running page with weekly km trend and long-run progression
-- [ ] Health page with weight, sleep, HRV, resting HR trends
-- [ ] Strength page with session timeline and lower-body load density
-- [ ] Weekly review page with key changes and flags
+- [x] Running page with weekly km trend and long-run progression
+- [x] Health page with weight, sleep, HRV, resting HR trends
+- [x] Strength page with session timeline and lower-body load density
+- [x] Weekly review page with key changes and flags
 
 ### Deliverable
 A usable localhost dashboard centered on the Today screen.
@@ -196,13 +196,13 @@ A usable localhost dashboard centered on the Today screen.
 ---
 
 ## Phase 8 - LLM layer
-- [ ] Build structured context assembler from score and feature outputs
-- [ ] Define prompt for daily explanation
-- [ ] Define prompt for weekly review
-- [ ] Define prompt for question answering
-- [ ] Log structured context alongside LLM output
-- [ ] Add grounding guardrails so the model only explains explicit inputs
-- [ ] Add fallback behavior if LLM call fails
+- [x] Build structured context assembler from score and feature outputs
+- [x] Define prompt for daily explanation
+- [x] Define prompt for weekly review
+- [x] Define prompt for question answering
+- [x] Log structured context alongside LLM output
+- [x] Add grounding guardrails so the model only explains explicit inputs
+- [x] Add fallback behavior if LLM call fails
 
 ### Deliverable
 The app produces grounded natural-language explanations of computed states.

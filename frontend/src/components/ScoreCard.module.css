@@ -1,0 +1,90 @@
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  border-color: var(--color-muted);
+  box-shadow: var(--shadow-md);
+}
+
+.compact {
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.ringWrap {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.compact .ringWrap {
+  width: 48px;
+  height: 48px;
+}
+
+.ring {
+  width: 100%;
+  height: 100%;
+}
+
+.ringProgress {
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.ringCenter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score {
+  font-size: 1.125rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.compact .score {
+  font-size: 1rem;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.compact .title {
+  font-size: 0.8125rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.body {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}

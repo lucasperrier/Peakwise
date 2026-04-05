@@ -1,0 +1,17 @@
+.loading,
+.error {
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.error {
+  color: var(--color-red);
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.625rem;
+  margin-top: 0.5rem;
+}

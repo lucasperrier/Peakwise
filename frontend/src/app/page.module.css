@@ -1,0 +1,330 @@
+/* Loading & Error */
+.loadingWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem 0;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading {
+  color: var(--color-text-secondary);
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.error {
+  color: var(--color-red);
+  text-align: center;
+  padding: 3rem 0;
+}
+
+/* ==== Hero recommendation ==== */
+.hero {
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-raised) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  animation: fadeIn 0.4s ease;
+}
+
+.heroTop {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.heroMode {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.heroAction {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0.25rem 0 0.75rem;
+  line-height: 1.2;
+}
+
+.heroMeta {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.tag {
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-md);
+  background: var(--color-hover);
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.tagAlt {
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.reasonCode {
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-hover);
+  font-size: 0.6875rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.riskFlags {
+  display: flex;
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.riskFlag {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full);
+  background: var(--color-red-bg);
+  color: var(--color-red);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+/* ==== AI Card ==== */
+.aiCard {
+  background: var(--color-surface);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 25%, var(--color-border));
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  animation: fadeIn 0.5s ease;
+}
+
+.aiHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.aiIcon {
+  color: var(--color-accent);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.aiLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-accent);
+}
+
+.aiText {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--color-text-secondary);
+}
+
+/* ==== Score grid ==== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.subList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.375rem;
+  margin-top: 0.375rem;
+}
+
+/* ==== Drivers card ==== */
+.driversCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.driversTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+
+.driversGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .driversGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.driversSubtitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+}
+
+.driverList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.driverPositive {
+  font-size: 0.8125rem;
+  color: var(--color-green);
+}
+
+.driverPositive::before {
+  content: "▲ ";
+  font-size: 0.625rem;
+}
+
+.driverNegative {
+  font-size: 0.8125rem;
+  color: var(--color-red);
+}
+
+.driverNegative::before {
+  content: "▼ ";
+  font-size: 0.625rem;
+}
+
+/* ==== Ask Peakwise ==== */
+.askCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.askTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+
+.askForm {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.askInput {
+  flex: 1;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.askInput::placeholder {
+  color: var(--color-muted);
+}
+
+.askInput:focus {
+  border-color: var(--color-accent);
+}
+
+.askBtn {
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.askBtn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.askBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.askAnswer {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-accent) 5%, var(--color-bg));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 15%, var(--color-border));
+  animation: fadeIn 0.3s ease;
+}
+
+.askAnswer p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
