@@ -57,3 +57,19 @@ export function round0(v: number | null): string {
   if (v === null) return "—";
   return Math.round(v).toString();
 }
+
+export function confidenceColor(level: string | null): string {
+  if (!level) return "var(--color-muted)";
+  if (level === "high") return "var(--color-green)";
+  if (level === "medium") return "var(--color-yellow)";
+  if (level === "low") return "var(--color-orange)";
+  return "var(--color-red)";
+}
+
+export function confidenceLabel(level: string | null): string {
+  if (!level) return "No data";
+  if (level === "high") return "High confidence";
+  if (level === "medium") return "Medium confidence";
+  if (level === "low") return "Low confidence";
+  return "Insufficient data";
+}

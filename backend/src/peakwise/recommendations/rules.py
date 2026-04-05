@@ -9,6 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from peakwise.config import (
+    CONFIDENCE_RECOVERY_THRESHOLD,
+    CONFIDENCE_REDUCE_THRESHOLD,
     RECO_HEALTH_CAUTION,
     RECO_LOAD_BALANCE_CAUTION,
     RECO_RECOVERY_FULL_GO,
@@ -163,6 +165,7 @@ def determine_recommendation(
     general_health_score: float,
     load_balance_score: float,
     warnings: dict[str, bool],
+    confidence_score: float | None = None,
 ) -> RecommendationResult:
     """Determine the full recommendation from scores and warnings.
 
@@ -170,7 +173,8 @@ def determine_recommendation(
     1. Map recovery score to a base mode.
     2. Cap the mode if load-balance or health scores are in caution range.
     3. Apply hard-warning overrides.
-    4. Map the final mode to an action, modifiers, and alternative.
+    4. Apply confidence-based reduction when confidence is low.
+    5. Map the final mode to an action, modifiers, and alternative.
     """
     reason_codes: list[str] = []
     risk_flags: list[str] = []
@@ -190,7 +194,17 @@ def determine_recommendation(
     # Step 3: hard-warning overrides
     mode = _apply_warning_overrides(mode, warnings, reason_codes, risk_flags)
 
-    # Step 4: build result
+    # Step 4: confidence-based reduction
+    if confidence_score is not None:
+        if confidence_score < CONFIDENCE_RECOVERY_THRESHOLD:
+            mode = _cap_mode(mode, RecommendationMode.recovery_focused)
+            reason_codes.append("data_coverage_low")
+            risk_flags.append("insufficient_data")
+        elif confidence_score < CONFIDENCE_REDUCE_THRESHOLD:
+            mode = _cap_mode(mode, RecommendationMode.reduce_intensity)
+            reason_codes.append("data_coverage_low")
+
+    # Step 5: build result
     return RecommendationResult(
         mode=mode,
         recommended_action=_MODE_ACTIONS[mode],

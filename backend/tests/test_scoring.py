@@ -228,6 +228,51 @@ class TestRecoveryScore:
         score, _ = compute_recovery_score(features, fact)
         assert 0.0 <= score <= 100.0
 
+    def test_illness_ceiling(self):
+        """Illness flag → recovery capped at 40."""
+        features = _make_features(
+            BASE_DATE,
+            hrv_vs_28d_pct=10.0,
+            resting_hr_vs_28d_delta=-2.0,
+            sleep_7d_avg=480.0,
+            sleep_debt_min=0.0,
+            recent_load_3d=100.0,
+            recent_load_7d=250.0,
+        )
+        fact = _make_daily(BASE_DATE, illness_flag=True, soreness_score=1.0)
+        score, _ = compute_recovery_score(features, fact)
+        assert score <= 40.0
+
+    def test_severe_sleep_debt_ceiling(self):
+        """Sleep debt >= 400min → recovery capped at 50."""
+        features = _make_features(
+            BASE_DATE,
+            hrv_vs_28d_pct=10.0,
+            resting_hr_vs_28d_delta=-2.0,
+            sleep_7d_avg=300.0,
+            sleep_debt_min=450.0,
+            recent_load_3d=100.0,
+            recent_load_7d=250.0,
+        )
+        fact = _make_daily(BASE_DATE, illness_flag=False)
+        score, _ = compute_recovery_score(features, fact)
+        assert score <= 50.0
+
+    def test_high_soreness_ceiling(self):
+        """Soreness >= 7 → recovery capped at 55."""
+        features = _make_features(
+            BASE_DATE,
+            hrv_vs_28d_pct=10.0,
+            resting_hr_vs_28d_delta=-2.0,
+            sleep_7d_avg=480.0,
+            sleep_debt_min=0.0,
+            recent_load_3d=100.0,
+            recent_load_7d=250.0,
+        )
+        fact = _make_daily(BASE_DATE, soreness_score=8.0, illness_flag=False)
+        score, _ = compute_recovery_score(features, fact)
+        assert score <= 55.0
+
 
 # ---------------------------------------------------------------------------
 # Race-readiness score tests

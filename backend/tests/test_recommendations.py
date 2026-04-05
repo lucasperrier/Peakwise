@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from peakwise.models import (
     Base,
+    DailyFact,
     RecommendationMode,
     RecommendationSnapshot,
     ScoreSnapshot,
@@ -41,6 +42,29 @@ NO_WARNINGS: dict[str, bool] = {
     "hrv_suppression_warning": False,
     "overload_warning": False,
 }
+
+
+def _seed_daily_fact(session: Session, d: date) -> DailyFact:
+    """Create a well-populated DailyFact so confidence is high."""
+    fact = DailyFact(
+        date=d,
+        body_weight_kg=75.0,
+        resting_hr_bpm=52,
+        hrv_ms=48.0,
+        sleep_duration_min=420.0,
+        sleep_score=80.0,
+        steps=8500,
+        soreness_score=2.0,
+        mood_score=7.0,
+        illness_flag=False,
+        has_garmin_data=True,
+        has_apple_health_data=True,
+        has_strava_data=True,
+        has_scale_data=True,
+        has_manual_input=True,
+    )
+    session.add(fact)
+    return fact
 
 
 @pytest.fixture()
@@ -245,6 +269,43 @@ class TestReasonCodesAndShape:
 
 
 # ---------------------------------------------------------------------------
+# Confidence-based capping
+# ---------------------------------------------------------------------------
+
+
+class TestConfidenceCapping:
+    def test_very_low_confidence_caps_at_recovery_focused(self):
+        """Confidence < 25 → capped at recovery_focused."""
+        result = determine_recommendation(
+            85.0, 70.0, 75.0, 75.0, dict(NO_WARNINGS), confidence_score=20.0
+        )
+        assert result.mode == RecommendationMode.recovery_focused
+        assert "insufficient_data" in result.risk_flags
+
+    def test_low_confidence_caps_at_reduce_intensity(self):
+        """Confidence < 50 → capped at reduce_intensity."""
+        result = determine_recommendation(
+            85.0, 70.0, 75.0, 75.0, dict(NO_WARNINGS), confidence_score=40.0
+        )
+        assert result.mode == RecommendationMode.reduce_intensity
+        assert "data_coverage_low" in result.reason_codes
+
+    def test_high_confidence_no_cap(self):
+        """Confidence >= 50 → no capping applied."""
+        result = determine_recommendation(
+            85.0, 70.0, 75.0, 75.0, dict(NO_WARNINGS), confidence_score=80.0
+        )
+        assert result.mode == RecommendationMode.full_go
+
+    def test_none_confidence_no_cap(self):
+        """No confidence score → no capping."""
+        result = determine_recommendation(
+            85.0, 70.0, 75.0, 75.0, dict(NO_WARNINGS), confidence_score=None
+        )
+        assert result.mode == RecommendationMode.full_go
+
+
+# ---------------------------------------------------------------------------
 # Next-best alternative
 # ---------------------------------------------------------------------------
 
@@ -322,6 +383,7 @@ class TestRunRecommendationPipeline:
     def test_persists_recommendations(self, db_session: Session):
         for i in range(3):
             d = BASE_DATE + timedelta(days=i)
+            _seed_daily_fact(db_session, d)
             db_session.add(_make_score(d, recovery=75.0))
         db_session.flush()
 
@@ -335,6 +397,7 @@ class TestRunRecommendationPipeline:
 
     def test_skips_dates_without_scores(self, db_session: Session):
         # Only add score for first day of a 3-day range
+        _seed_daily_fact(db_session, BASE_DATE)
         db_session.add(_make_score(BASE_DATE, recovery=75.0))
         db_session.flush()
 
@@ -343,6 +406,7 @@ class TestRunRecommendationPipeline:
         assert result.dates_skipped == 2
 
     def test_upsert_no_duplicates(self, db_session: Session):
+        _seed_daily_fact(db_session, BASE_DATE)
         db_session.add(_make_score(BASE_DATE, recovery=85.0))
         db_session.flush()
 
@@ -363,6 +427,7 @@ class TestRunRecommendationPipeline:
     def test_date_range_filtering(self, db_session: Session):
         for i in range(5):
             d = BASE_DATE + timedelta(days=i)
+            _seed_daily_fact(db_session, d)
             db_session.add(_make_score(d, recovery=75.0))
         db_session.flush()
 
@@ -373,6 +438,7 @@ class TestRunRecommendationPipeline:
         assert result.dates_skipped == 0
 
     def test_recommendation_content_correct(self, db_session: Session):
+        _seed_daily_fact(db_session, BASE_DATE)
         db_session.add(_make_score(BASE_DATE, recovery=85.0, load_balance=80.0))
         db_session.flush()
 
@@ -385,6 +451,7 @@ class TestRunRecommendationPipeline:
 
     def test_warning_override_persisted(self, db_session: Session):
         warnings = {**NO_WARNINGS, "knee_pain_warning": True}
+        _seed_daily_fact(db_session, BASE_DATE)
         db_session.add(_make_score(BASE_DATE, recovery=85.0, warnings=warnings))
         db_session.flush()
 

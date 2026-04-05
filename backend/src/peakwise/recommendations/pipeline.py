@@ -14,8 +14,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from peakwise.config import RECOMMENDATION_ENGINE_VERSION
-from peakwise.models import RecommendationSnapshot, ScoreSnapshot
+from peakwise.models import DailyFact, RecommendationSnapshot, ScoreSnapshot
 from peakwise.recommendations.rules import determine_recommendation
+from peakwise.trust import compute_decision_confidence
 
 logger = logging.getLogger("peakwise.recommendations")
 
@@ -29,6 +30,7 @@ class RecommendationPipelineResult:
 
 def compute_recommendation_for_date(
     score: ScoreSnapshot,
+    session: Session | None = None,
 ) -> RecommendationSnapshot | None:
     """Compute a recommendation from a persisted score snapshot.
 
@@ -39,12 +41,19 @@ def compute_recommendation_for_date(
 
     warnings: dict[str, bool] = score.warnings_json or {}
 
+    # Compute decision confidence for the recommendation
+    confidence_score: float | None = None
+    if session is not None:
+        fact: DailyFact | None = session.get(DailyFact, score.date)
+        confidence_score, _ = compute_decision_confidence(fact, score.date, session)
+
     result = determine_recommendation(
         recovery_score=score.recovery_score,
         race_readiness_score=score.race_readiness_score or 50.0,
         general_health_score=score.general_health_score or 50.0,
         load_balance_score=score.load_balance_score or 50.0,
         warnings=warnings,
+        confidence_score=confidence_score,
     )
 
     return RecommendationSnapshot(
@@ -104,7 +113,7 @@ def run_recommendation_pipeline(
             current += timedelta(days=1)
             continue
         try:
-            snapshot = compute_recommendation_for_date(score)
+            snapshot = compute_recommendation_for_date(score, session=session)
             if snapshot is None:
                 result.dates_skipped += 1
             else:

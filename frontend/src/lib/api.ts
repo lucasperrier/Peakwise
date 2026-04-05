@@ -3,6 +3,9 @@
 import type {
   AskRequest,
   AskResponse,
+  DebugDayResponse,
+  FeedbackRequest,
+  FeedbackResponse,
   HealthResponse,
   RunningResponse,
   StrengthResponse,
@@ -68,4 +71,12 @@ export function fetchWeeklyReview(date?: string): Promise<WeeklyReviewResponse> 
 
 export function askQuestion(req: AskRequest): Promise<AskResponse> {
   return postJSON<AskResponse>("/ask", req);
+}
+
+export function submitFeedback(req: FeedbackRequest): Promise<FeedbackResponse> {
+  return postJSON<FeedbackResponse>("/feedback", req);
+}
+
+export function fetchDebugDay(date: string): Promise<DebugDayResponse> {
+  return fetchJSON<DebugDayResponse>(`/debug/day?date=${date}`);
 }

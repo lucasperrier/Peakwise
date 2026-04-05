@@ -1,243 +1,364 @@
-# TASKS
+# PHASE_2_CHECKLIST.md
 
-## Goal
-Build a V1 that can answer:
+# Peakwise — Phase 2 Checklist
+## Trust, scoring, and daily decision layer
 
-**What should I do today, and why?**
+Phase 2 goal: make Peakwise able to answer, for any given day:
 
-This task list is ordered so coding agents can work in bounded, testable increments.
+- what should I do today
+- why
+- how confident is the system
+- which exact inputs drove that result
 
----
-
-## Phase 0 - Repository and planning
-- [x] Initialize repository structure
-- [x] Create `README.md`
-- [x] Add `docs/v1_scope.md`
-- [x] Add `docs/data_model.md`
-- [x] Add `docs/scoring.md`
-- [x] Add `docs/bedrock_spec.md`
-- [x] Define coding conventions and agent guardrails
-- [x] Choose stack and document the decision
-- [x] Configure linting and formatting
-- [x] Configure testing framework
-- [x] Create `.env.example`
-
-### Deliverable
-A repo with clear docs, tooling, and a stable implementation target.
+This phase turns the current MVP into a trustworthy decision system, consistent with the bedrock spec. :contentReference[oaicite:0]{index=0}
 
 ---
 
-## Phase 1 - Warehouse foundation
+## 1. Freeze the decision contract
 
-### Database
-- [x] Set up database project
-- [x] Create migrations for `daily_fact`
-- [x] Create migrations for `workout_fact`
-- [x] Create migrations for `manual_daily_input`
-- [x] Create migrations for `daily_source_coverage`
-- [x] Create migrations for `daily_features`
-- [x] Create migrations for `score_snapshot`
-- [x] Create migrations for `recommendation_snapshot`
+### Outputs for one date
+- [x] `recovery_score`
+- [x] `race_readiness_score`
+- [x] `general_health_score`
+- [x] `load_balance_score`
+- [x] `recommendation_mode`
+- [x] `recommended_action`
+- [x] `reason_codes`
+- [x] `confidence_level`
 
-### Seed and fixture data
-- [x] Create seed file for daily metrics
-- [x] Create seed file for workouts
-- [x] Create seed file for manual inputs
-- [x] Create seed script to populate local database
+### Allowed recommendation modes
+- [x] `full_go`
+- [x] `train_as_planned`
+- [x] `reduce_intensity`
+- [x] `recovery_focused`
+- [x] `full_rest`
+- [x] `injury_watch`
 
-### Validation
-- [x] Add schema validation for inbound records
-- [x] Add source lineage fields
-- [x] Add data quality flags
-- [x] Add tests for warehouse writes
+### Allowed action labels
+- [x] `easy_run`
+- [x] `quality_run`
+- [x] `long_run`
+- [x] `crossfit_only`
+- [x] `crossfit_plus_easy_run`
+- [x] `mobility_walk`
+- [x] `rest`
 
-### Deliverable
-A local database containing realistic seeded historical data.
-
----
-
-## Phase 2 - Ingestion layer
-
-### File-based ingestion first
-- [x] Implement Garmin import from export format or normalized CSV
-- [x] Implement Apple Health import from export format or normalized CSV
-- [x] Implement Strava import from export format or normalized CSV
-- [x] Implement scale import from CSV
-- [x] Implement manual input import and form handling
-
-### Normalization
-- [x] Map imported data into source-agnostic warehouse records
-- [x] Deduplicate duplicate workout records across sources if needed
-- [x] Mark partial or missing days explicitly
-- [x] Log ingestion errors and skipped rows
-
-### Deliverable
-A repeatable ingestion pipeline that can rebuild the warehouse from exported data.
+### Versioning
+- [x] Add `score_version`
+- [x] Add `recommendation_version`
 
 ---
 
-## Phase 3 - Feature engineering
+## 2. Persist score breakdowns
 
-### Daily features
-- [x] Compute 7-day rolling averages
-- [x] Compute 28-day baseline deviations
-- [x] Compute 90-day baseline features where relevant
-- [x] Compute sleep debt
-- [x] Compute body-weight slope
-- [x] Compute recovery trend
-- [x] Compute steps consistency
-- [x] Compute mood and stress trends
+### Tables
+- [x] Create `daily_score_snapshots`
+- [x] Create `daily_score_components`
+- [x] Create `daily_reason_codes`
 
-### Running features
-- [x] Compute weekly km
-- [x] Compute rolling 4-week km
-- [x] Compute longest run in last 7 days
-- [x] Compute easy-run efficiency at fixed HR band
-- [x] Compute quality-session completion counts
-- [x] Compute projected HM time placeholder logic
-- [x] Compute plan adherence placeholder logic
+### `daily_score_snapshots`
+- [x] Store one row per user per date
+- [x] Persist final scores
+- [x] Persist recommendation mode
+- [x] Persist recommended action
+- [x] Persist score version
+- [x] Persist recommendation version
+- [x] Persist generated timestamp
 
-### Hybrid features
-- [x] Parse CrossFit notes into tags where available
-- [x] Compute lower-body CrossFit density
-- [x] Compute hard-day density
-- [x] Compute session spacing quality
-- [x] Compute interference risk score inputs
-- [x] Compute long-run protection score inputs
+### `daily_score_components`
+- [x] Persist component name
+- [x] Persist raw input value
+- [x] Persist normalized value
+- [x] Persist weighted contribution
+- [x] Persist direction: `positive`, `negative`, `neutral`
 
-### Deliverable
-A populated `daily_features` layer that supports deterministic scoring.
+### `daily_reason_codes`
+- [x] Store structured warning / explanation codes
+- [x] Initial codes:
+  - [x] `sleep_debt_high`
+  - [x] `hrv_below_baseline`
+  - [x] `resting_hr_elevated`
+  - [x] `long_run_protected`
+  - [x] `lower_body_density_high`
+  - [x] `knee_pain_flag`
+  - [x] `data_coverage_low`
 
 ---
 
-## Phase 4 - Scoring engine
+## 3. Build the data trust layer
+
+### Daily source coverage
+- [x] Garmin present
+- [x] Apple Health present
+- [x] Strava present
+- [x] Scale present
+- [x] Manual input present
+
+### Field-level provenance
+- [x] Sleep source
+- [x] HRV source
+- [x] Resting HR source
+- [x] Weight source
+- [x] Workout source
+
+### Data quality rules
+- [x] Detect duplicate workout imports across sources
+- [x] Define deduplication strategy for overlapping sessions
+- [x] Mark partial days explicitly
+- [x] Add stale-data detection
+  - [x] no fresh recovery data
+  - [x] no fresh weight data
+  - [x] no fresh workout sync
+
+### Trust output
+- [x] Compute `decision_confidence_score`
+- [x] Reduce recommendation strength when confidence is low
+
+---
+
+## 4. Formalize each score
 
 ### Recovery score
-- [x] Implement recovery score formula
-- [x] Persist recovery subcomponents
-- [x] Add tests for high, medium, low readiness days
+#### Inputs
+- [x] HRV vs 28-day baseline
+- [x] Resting HR vs baseline
+- [x] Sleep duration
+- [x] Sleep debt
+- [x] Recent load
+- [x] Soreness
+- [x] Illness
+- [x] Device readiness if available
 
-### Race-readiness score
-- [x] Implement race-readiness formula
-- [x] Persist race-readiness subcomponents
-- [x] Add tests for on-track vs off-track scenarios
+#### Logic
+- [x] Finalize weights
+- [x] Finalize caps
+- [x] Add hard overrides:
+  - [x] illness reduces ceiling
+  - [x] severe sleep debt reduces ceiling
+  - [x] high soreness reduces ceiling
 
-### General-health score
-- [x] Implement general-health formula
-- [x] Persist general-health subcomponents
-- [x] Add tests for stable vs drifting health scenarios
+### Race readiness score
+#### Inputs
+- [x] Weekly km
+- [x] Rolling 4-week km
+- [x] Longest run
+- [x] Easy pace at fixed HR
+- [x] Quality session completion
+- [x] Plan adherence
+- [x] Projected HM time
+- [x] Trend direction
 
-### Load-balance score
-- [x] Implement load-balance formula
-- [x] Persist load-balance subcomponents
-- [x] Add tests for balanced vs interference-heavy weeks
+#### Logic
+- [x] Define projection fallback when data is insufficient
+- [x] Define when race-readiness is withheld due to missing running data
 
-### Warning logic
-- [x] Implement knee pain warning
-- [x] Implement illness warning
-- [x] Implement sleep debt warning
-- [x] Implement HRV suppression warning
-- [x] Implement overload warning
-- [x] Add tests for warning triggers
+### General health score
+#### Inputs
+- [x] Sleep consistency
+- [x] Weight trend
+- [x] Resting HR trend
+- [x] HRV stability
+- [x] Pain-free days
+- [x] Mood trend
+- [x] Stress trend
+- [x] Steps consistency
 
-### Deliverable
-A deterministic score engine with persisted outputs and test coverage.
+#### Logic
+- [x] Define safe weight trend band
+- [x] Add penalty rules for aggressive weight loss
+- [x] Add penalty rules for worsening pain
 
----
+### Load balance score
+#### Inputs
+- [x] Hard-day density
+- [x] Lower-body CrossFit density
+- [x] Session spacing
+- [x] Long-run protection
+- [x] Interference risk
 
-## Phase 5 - Recommendation engine
-- [x] Define recommendation rule config
-- [x] Implement mapping from scores and warnings to recommendation mode
-- [x] Implement mapping from recommendation mode to suggested action
-- [x] Add reason codes
-- [x] Add next-best alternative output
-- [x] Persist recommendation snapshots
-- [x] Add unit tests for recommendation outcomes
-
-### Deliverable
-The backend can answer: what should I do today, and why?
-
----
-
-## Phase 6 - API contracts
-- [x] Create `GET /api/today`
-- [x] Create `GET /api/running`
-- [x] Create `GET /api/health`
-- [x] Create `GET /api/strength`
-- [x] Create `GET /api/weekly-review`
-- [x] Create `POST /api/manual-input`
-- [x] Define typed response payloads
-- [x] Add contract tests
-
-### Deliverable
-Stable application endpoints ready for the frontend.
-
----
-
-## Phase 7 - Frontend MVP
-
-### Today page
-- [x] Build Today recommendation card
-- [x] Build Recovery card
-- [x] Build Half-marathon card
-- [x] Build Health card
-- [x] Build Training-balance card
-- [x] Build short explanation panel
-
-### Trend views
-- [x] Running page with weekly km trend and long-run progression
-- [x] Health page with weight, sleep, HRV, resting HR trends
-- [x] Strength page with session timeline and lower-body load density
-- [x] Weekly review page with key changes and flags
-
-### Deliverable
-A usable localhost dashboard centered on the Today screen.
+#### Logic
+- [x] Define what counts as a hard day
+- [x] Define lower-body dominant CrossFit tags
+- [x] Define protected windows around quality runs and long runs
 
 ---
 
-## Phase 8 - LLM layer
-- [x] Build structured context assembler from score and feature outputs
-- [x] Define prompt for daily explanation
-- [x] Define prompt for weekly review
-- [x] Define prompt for question answering
-- [x] Log structured context alongside LLM output
-- [x] Add grounding guardrails so the model only explains explicit inputs
-- [x] Add fallback behavior if LLM call fails
+## 5. Build the recommendation rules engine
 
-### Deliverable
-The app produces grounded natural-language explanations of computed states.
+### Core engine
+- [x] Create a pure deterministic recommendation service
+- [x] Input = score bundle + warnings + plan context
+- [x] Output = recommendation mode + action + reason codes
 
----
+### Priority order
+- [x] Illness override
+- [x] Injury / pain override
+- [x] Severe recovery suppression
+- [x] Overload / load-balance suppression
+- [x] Normal plan execution
 
-## Phase 9 - Feedback loop and refinement
-- [ ] Add recommendation feedback UI
-- [ ] Store feedback events
-- [ ] Build simple admin/debug view for score inspection
-- [ ] Surface missing-data warnings in UI
-- [ ] Tune thresholds using lived data
-- [ ] Improve note parsing heuristics
+### Intensity modifiers
+- [x] Shorten session
+- [x] Swap quality for easy
+- [x] Remove second session
+- [x] Replace with mobility
 
-### Deliverable
-A V1 that can be iteratively improved from real usage.
-
----
-
-## First milestone
-- [ ] Given seeded historical data, the app computes scores
-- [ ] Given those scores, the app produces a recommendation
-- [ ] The Today screen renders the recommendation and score drivers
-- [ ] The LLM explanation is grounded in structured context
-
-When all four items above are true, the first milestone is complete.
+### Test cases
+- [x] Good race-readiness but terrible recovery
+- [x] Good recovery but knee pain
+- [x] Strong running metrics but poor load balance
+- [x] Partial missing data
 
 ---
 
-## Agent guardrails
-- [ ] Never invent score formulas outside documented rules
-- [ ] Never bypass typed contracts
-- [ ] Keep business logic out of UI components
-- [ ] All score outputs must expose subcomponents
-- [ ] Preserve source lineage in ingestion
-- [ ] Keep thresholds in config, not hard-coded in multiple places
-- [ ] Add tests for every scoring and recommendation module
-- [ ] LLM outputs must be based on structured context only
+## 6. Build a single-date debug endpoint
+
+### Backend
+- [x] Add `/api/debug/day?date=YYYY-MM-DD`
+
+### Response should include
+- [x] Raw normalized daily facts
+- [x] Relevant workouts in lookback window
+- [x] Baseline comparisons
+- [x] Score components
+- [x] Reason codes
+- [x] Recommendation result
+- [x] Confidence result
+
+### Frontend
+- [x] Add a simple admin/debug page
+- [x] Use it as the main threshold-tuning tool
+
+---
+
+## 7. Make the UI uncertainty-aware
+
+### Today page and cards
+- [x] Add data confidence badge
+- [x] Add partial-data state to major cards
+- [x] Show score drivers
+- [x] Show warnings above recommendation
+
+### UX distinctions
+- [x] Distinguish low score + strong confidence
+- [x] Distinguish low score + weak confidence
+
+### Inspectability
+- [x] Add expandable component breakdowns on score cards
+- [x] Add a “why today?” drawer using structured reasons, not LLM-only text
+
+---
+
+## 8. Improve workout tagging for Strength
+
+### CrossFit parser
+- [x] Build lightweight parser for Strava notes / manual logs
+
+### Tag vocabulary
+- [x] squat
+- [x] hinge
+- [x] lunge
+- [x] jump
+- [x] olympic_lift
+- [x] upper_push
+- [x] upper_pull
+- [x] engine
+- [x] metcon
+
+### Derived outputs
+- [x] Infer lower-body stress score per session
+- [x] Infer interference risk for next 24–48h
+- [x] Store parsed tags
+- [x] Store parsing confidence
+- [x] Add manual override for bad parses
+
+---
+
+## 9. Add feedback capture
+
+### Daily recommendation feedback
+- [x] `accurate`
+- [x] `too_hard`
+- [x] `too_easy`
+- [x] `pain_increased`
+- [x] `ignored`
+
+### Extra note
+- [x] Optional free-text note
+
+### Persist feedback with
+- [x] date
+- [x] recommendation version
+- [x] actual completed session
+- [x] subjective next-day outcome
+
+### Review tooling
+- [x] Add simple feedback review page for threshold tuning
+
+---
+
+## 10. Test and validate
+
+### Unit tests
+- [x] Test every score calculation
+- [x] Test every recommendation override
+
+### Fixtures
+- [x] Ideal training day
+- [x] Overload day
+- [x] Poor sleep day
+- [x] Injury-watch day
+- [x] Incomplete-data day
+
+### Regression
+- [x] Add snapshot tests for score outputs
+- [x] Ensure explanations never require missing fields
+- [x] Validate one year of historical data can recompute prior daily decisions consistently, as required by the bedrock spec. :contentReference[oaicite:1]{index=1}
+
+---
+
+## 11. Only after that: Phase 2.5 LLM layer
+
+### Structured input only
+- [x] Final scores
+- [x] Component summaries
+- [x] Reason codes
+- [x] Recommendation mode
+- [x] Plan context
+- [x] Confidence level
+
+### Outputs
+- [x] One daily explanation paragraph
+- [x] One weekly review summary
+
+### Trust controls
+- [x] Log prompt context
+- [x] Log model output
+- [x] Prevent unsupported claims by grounding on reason codes
+
+---
+
+## Definition of done for Phase 2
+
+- [x] Any score on screen can be traced to stored components
+- [x] Any recommendation can be explained with explicit rules
+- [x] Missing or conflicting data lowers confidence visibly
+- [x] The app can debug one day end-to-end
+- [x] Feedback on recommendation quality is stored
+- [x] The system answers “what should I do today and why?” without relying on the LLM for the decision itself, matching the bedrock design. :contentReference[oaicite:2]{index=2}
+
+---
+
+## Recommended execution order
+
+1. [x] Freeze decision contract
+2. [x] Persist score breakdowns
+3. [x] Build data trust layer
+4. [x] Finalize score formulas
+5. [x] Build deterministic recommendation engine
+6. [x] Add debug endpoint/page
+7. [x] Make UI uncertainty-aware
+8. [x] Improve workout tagging
+9. [x] Add feedback capture
+10. [x] Test and validate
+11. [x] Add LLM explanations last

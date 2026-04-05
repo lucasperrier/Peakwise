@@ -15,12 +15,14 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from peakwise.config import SCORE_ENGINE_VERSION
-from peakwise.models import DailyFact, DailyFeatures, ScoreSnapshot
+from peakwise.models import DailyFact, DailyFeatures, RecommendationSnapshot, ScoreSnapshot
+from peakwise.scoring.breakdowns import persist_score_breakdown
 from peakwise.scoring.health import compute_general_health_score
 from peakwise.scoring.load_balance import compute_load_balance_score
 from peakwise.scoring.race_readiness import compute_race_readiness_score
 from peakwise.scoring.recovery import compute_recovery_score
 from peakwise.scoring.warnings import compute_all_warnings
+from peakwise.trust import compute_decision_confidence
 
 logger = logging.getLogger("peakwise.scoring")
 
@@ -129,6 +131,23 @@ def run_scoring_pipeline(
                 result.dates_skipped += 1
             else:
                 session.merge(snapshot)
+
+                # Persist score breakdown (best-effort)
+                try:
+                    fact = daily_facts.get(current)
+                    conf_score, conf_level = compute_decision_confidence(fact, current, session)
+                    rec: RecommendationSnapshot | None = session.get(RecommendationSnapshot, current)
+                    persist_score_breakdown(
+                        target_date=current,
+                        score_snapshot=snapshot,
+                        rec_snapshot=rec,
+                        confidence_score=conf_score,
+                        confidence_level=conf_level,
+                        session=session,
+                    )
+                except Exception as exc:
+                    logger.warning("Failed to persist breakdown for %s: %s", current, exc)
+
                 result.dates_scored += 1
         except Exception as exc:
             msg = f"Error scoring {current}: {exc}"

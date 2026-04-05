@@ -9,12 +9,17 @@ from __future__ import annotations
 
 from peakwise.config import (
     RECOVERY_FATIGUE_SCALE,
+    RECOVERY_HIGH_SORENESS_CEILING,
+    RECOVERY_HIGH_SORENESS_THRESHOLD,
     RECOVERY_HRV_BASELINE_SCORE,
     RECOVERY_HRV_SCALE,
+    RECOVERY_ILLNESS_CEILING,
     RECOVERY_LOAD_3D_SCALE,
     RECOVERY_LOAD_7D_BLEND,
     RECOVERY_RHR_BASELINE_SCORE,
     RECOVERY_RHR_SCALE,
+    RECOVERY_SEVERE_SLEEP_DEBT_CEILING,
+    RECOVERY_SEVERE_SLEEP_DEBT_THRESHOLD,
     RECOVERY_SLEEP_AVG_FLOOR,
     RECOVERY_SLEEP_AVG_RANGE,
     RECOVERY_SLEEP_DEBT_PENALTY_SCALE,
@@ -120,5 +125,17 @@ def compute_recovery_score(
         if value is None:
             value = SCORE_MISSING_DEFAULT
         score += value * weights[weight_key]
+
+    score = _clamp(score)
+
+    # Hard override ceilings
+    if daily_fact.illness_flag is True:
+        score = min(score, RECOVERY_ILLNESS_CEILING)
+
+    if features.sleep_debt_min is not None and features.sleep_debt_min >= RECOVERY_SEVERE_SLEEP_DEBT_THRESHOLD:
+        score = min(score, RECOVERY_SEVERE_SLEEP_DEBT_CEILING)
+
+    if daily_fact.soreness_score is not None and daily_fact.soreness_score >= RECOVERY_HIGH_SORENESS_THRESHOLD:
+        score = min(score, RECOVERY_HIGH_SORENESS_CEILING)
 
     return _clamp(score), subcomponents

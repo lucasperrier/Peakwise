@@ -167,6 +167,7 @@ def get_weekly_review(
             score_changes=score_changes.model_dump(mode="json") if score_changes else None,
             flags=flags,
             settings=Settings(),
+            db=db,
         )
         explanation = result.explanation
     except Exception:

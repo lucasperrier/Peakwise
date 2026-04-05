@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState, FormEvent } from "react";
-import { fetchToday, askQuestion } from "@/lib/api";
+import { fetchToday, askQuestion, submitFeedback } from "@/lib/api";
 import type { TodayResponse } from "@/lib/types";
-import { formatAction, formatMode, round0 } from "@/lib/format";
+import { formatAction, formatMode, round0, confidenceColor, confidenceLabel } from "@/lib/format";
 import PageShell from "@/components/PageShell";
 import ScoreCard from "@/components/ScoreCard";
 import WarningBadge from "@/components/WarningBadge";
@@ -18,6 +18,12 @@ export default function TodayPage() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<string | null>(null);
   const [askLoading, setAskLoading] = useState(false);
+
+  // Feedback state
+  const [feedbackRating, setFeedbackRating] = useState<string | null>(null);
+  const [feedbackNote, setFeedbackNote] = useState("");
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
 
   useEffect(() => {
     fetchToday()
@@ -38,6 +44,24 @@ export default function TodayPage() {
       setAnswer("Sorry, I couldn't get an answer right now.");
     } finally {
       setAskLoading(false);
+    }
+  };
+
+  const handleFeedback = async (rating: string) => {
+    if (!data?.date || feedbackLoading) return;
+    setFeedbackLoading(true);
+    try {
+      await submitFeedback({
+        date: data.date,
+        rating: rating as "accurate" | "too_hard" | "too_easy" | "pain_increased" | "ignored",
+        free_text_note: feedbackNote.trim() || undefined,
+      });
+      setFeedbackRating(rating);
+      setFeedbackSent(true);
+    } catch {
+      // silently fail
+    } finally {
+      setFeedbackLoading(false);
     }
   };
 
@@ -66,6 +90,17 @@ export default function TodayPage() {
     <PageShell title="Today" subtitle={data.date}>
       {/* Warnings */}
       {warnings && <WarningBadge warnings={warnings} />}
+
+      {/* Confidence badge */}
+      {data.confidence_level && (
+        <div className={styles.confidenceBadge} style={{ borderColor: confidenceColor(data.confidence_level) }}>
+          <span className={styles.confidenceDot} style={{ background: confidenceColor(data.confidence_level) }} />
+          <span className={styles.confidenceText}>
+            {confidenceLabel(data.confidence_level)}
+            {data.confidence_score !== null && ` (${Math.round(data.confidence_score)}%)`}
+          </span>
+        </div>
+      )}
 
       {/* Recommendation hero */}
       {recommendation && (
@@ -163,6 +198,42 @@ export default function TodayPage() {
             <span className={styles.aiIcon}>✦</span>
             <p>{answer}</p>
           </div>
+        )}
+      </div>
+
+      {/* Feedback */}
+      <div className={styles.feedbackCard}>
+        <h3 className={styles.feedbackTitle}>How was today&apos;s recommendation?</h3>
+        {feedbackSent ? (
+          <p className={styles.feedbackThanks}>Thanks for your feedback ({feedbackRating?.replace(/_/g, " ")})</p>
+        ) : (
+          <>
+            <div className={styles.feedbackBtns}>
+              {[
+                { value: "accurate", label: "Accurate" },
+                { value: "too_hard", label: "Too hard" },
+                { value: "too_easy", label: "Too easy" },
+                { value: "pain_increased", label: "Pain increased" },
+                { value: "ignored", label: "I ignored it" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  className={styles.feedbackBtn}
+                  onClick={() => handleFeedback(opt.value)}
+                  disabled={feedbackLoading}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <input
+              type="text"
+              className={styles.feedbackNote}
+              placeholder="Optional note..."
+              value={feedbackNote}
+              onChange={(e) => setFeedbackNote(e.target.value)}
+            />
+          </>
         )}
       </div>
     </PageShell>

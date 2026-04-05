@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/health", label: "Health", icon: "💚" },
   { href: "/strength", label: "Strength", icon: "🏋️" },
   { href: "/weekly-review", label: "Review", icon: "📊" },
+  { href: "/debug", label: "Debug", icon: "🔧" },
 ];
 
 export default function Nav() {

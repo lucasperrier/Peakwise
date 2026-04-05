@@ -174,3 +174,49 @@ RECO_LOAD_BALANCE_CAUTION: float = 50.0
 
 # Health threshold: below this, cap at reduce_intensity
 RECO_HEALTH_CAUTION: float = 45.0
+
+# Confidence thresholds for recommendation strength reduction
+CONFIDENCE_REDUCE_THRESHOLD: float = 50.0  # below this, cap at reduce_intensity
+CONFIDENCE_RECOVERY_THRESHOLD: float = 25.0  # below this, cap at recovery_focused
+
+# ---------------------------------------------------------------------------
+# Recovery score hard override ceilings
+# ---------------------------------------------------------------------------
+
+# Illness reduces recovery ceiling
+RECOVERY_ILLNESS_CEILING: float = 40.0
+
+# Severe sleep debt reduces recovery ceiling
+RECOVERY_SEVERE_SLEEP_DEBT_THRESHOLD: float = 400.0  # minutes
+RECOVERY_SEVERE_SLEEP_DEBT_CEILING: float = 50.0
+
+# High soreness reduces recovery ceiling
+RECOVERY_HIGH_SORENESS_THRESHOLD: float = 7.0  # scale 0-10
+RECOVERY_HIGH_SORENESS_CEILING: float = 55.0
+
+# ---------------------------------------------------------------------------
+# CrossFit parser tag vocabulary
+# ---------------------------------------------------------------------------
+
+CROSSFIT_TAG_VOCABULARY: frozenset[str] = frozenset({
+    "squat", "hinge", "lunge", "jump", "olympic_lift",
+    "upper_push", "upper_pull", "engine", "metcon",
+})
+
+# Lower-body tags for CrossFit
+LOWER_BODY_TAGS: frozenset[str] = frozenset({
+    "squat", "hinge", "lunge", "jump", "olympic_lift",
+})
+
+# CrossFit keyword mapping for parser
+CROSSFIT_KEYWORDS: dict[str, list[str]] = {
+    "squat": ["squat", "thruster", "wall ball", "pistol", "goblet"],
+    "hinge": ["deadlift", "clean", "snatch", "swing", "rdl", "good morning", "hip thrust"],
+    "lunge": ["lunge", "step-up", "step up", "split squat", "bulgarian"],
+    "jump": ["box jump", "jump", "double under", "burpee", "muscle-up"],
+    "olympic_lift": ["clean", "snatch", "jerk", "c&j", "clean and jerk"],
+    "upper_push": ["press", "push-up", "push up", "dip", "bench", "hspu", "handstand push"],
+    "upper_pull": ["pull-up", "pull up", "row", "chin-up", "chin up", "muscle-up", "ring row", "t2b", "toes to bar"],
+    "engine": ["row", "bike", "ski", "run", "assault", "echo", "airdyne"],
+    "metcon": ["amrap", "emom", "for time", "chipper", "wod", "metcon", "rft", "tabata"],
+}

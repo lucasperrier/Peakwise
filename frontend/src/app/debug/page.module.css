@@ -1,0 +1,248 @@
+/* ==== Debug page ==== */
+.form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.dateInput {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.dateInput:focus {
+  border-color: var(--color-accent);
+}
+
+.loadBtn {
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.loadBtn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.loadBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--color-red);
+  font-size: 0.875rem;
+}
+
+/* ==== Sections ==== */
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sectionToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.sectionToggle:hover {
+  background: var(--color-hover);
+}
+
+.sectionArrow {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  flex-shrink: 0;
+  width: 1rem;
+}
+
+.sectionTitle {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.sectionBody {
+  padding: 0 1.25rem 1.25rem;
+}
+
+/* ==== Confidence ==== */
+.confidenceRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.confDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.confScore {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ==== KV grid ==== */
+.kvGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.kvRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.8125rem;
+}
+
+.kvKey {
+  color: var(--color-text-secondary);
+  text-transform: capitalize;
+}
+
+.kvVal {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.kvTrue {
+  color: var(--color-green);
+  font-weight: 600;
+}
+
+.kvFalse {
+  color: var(--color-muted);
+}
+
+/* ==== Table ==== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.table th,
+.table td {
+  padding: 0.375rem 0.625rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-muted);
+}
+
+.table td {
+  color: var(--color-text-secondary);
+}
+
+.dirPos {
+  color: var(--color-green);
+}
+
+.dirNeg {
+  color: var(--color-red);
+}
+
+.dirNeu {
+  color: var(--color-muted);
+}
+
+/* ==== Reason codes ==== */
+.codeList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.codeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.8125rem;
+}
+
+.codeBadge {
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-hover);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.codeSrc {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+}
+
+.codeSev {
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  background: var(--color-orange-bg);
+  color: var(--color-orange);
+}
+
+.codeDetail {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+/* ==== JSON ==== */
+.json {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -42,6 +42,10 @@ class TodayResponse(BaseModel):
     subcomponents: dict[str, dict[str, float | None]] | None = None
     warnings: dict[str, bool] | None = None
     explanation: str | None = None
+    confidence_score: float | None = None
+    confidence_level: str | None = None
+    score_version: str | None = None
+    recommendation_version: str | None = None
 
 
 # ---------------------------------------------------------------------------

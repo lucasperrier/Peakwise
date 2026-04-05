@@ -48,6 +48,37 @@ class RecommendationMode(enum.StrEnum):
     injury_watch = "injury_watch"
 
 
+class ActionLabel(enum.StrEnum):
+    easy_run = "easy_run"
+    quality_run = "quality_run"
+    long_run = "long_run"
+    crossfit_only = "crossfit_only"
+    crossfit_plus_easy_run = "crossfit_plus_easy_run"
+    mobility_walk = "mobility_walk"
+    rest = "rest"
+
+
+class ComponentDirection(enum.StrEnum):
+    positive = "positive"
+    negative = "negative"
+    neutral = "neutral"
+
+
+class ConfidenceLevel(enum.StrEnum):
+    high = "high"
+    medium = "medium"
+    low = "low"
+    insufficient = "insufficient"
+
+
+class FeedbackRating(enum.StrEnum):
+    accurate = "accurate"
+    too_hard = "too_hard"
+    too_easy = "too_easy"
+    pain_increased = "pain_increased"
+    ignored = "ignored"
+
+
 # ---------------------------------------------------------------------------
 # Raw layer - preserves original source payloads
 # ---------------------------------------------------------------------------
@@ -323,3 +354,130 @@ class HistoricalBestBlock(Base):
     label: Mapped[str | None] = mapped_column(String(200))
     metric_summary_json: Mapped[dict | None] = mapped_column(JSON)
     notes: Mapped[str | None] = mapped_column(Text)
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: score component breakdown tables
+# ---------------------------------------------------------------------------
+
+
+class DailyScoreSnapshot(Base):
+    """One row per user per date — final scores + recommendation + versions."""
+
+    __tablename__ = "daily_score_snapshot"
+
+    date: Mapped[date] = mapped_column(Date, primary_key=True)
+    recovery_score: Mapped[float | None] = mapped_column(Float)
+    race_readiness_score: Mapped[float | None] = mapped_column(Float)
+    general_health_score: Mapped[float | None] = mapped_column(Float)
+    load_balance_score: Mapped[float | None] = mapped_column(Float)
+    recommendation_mode: Mapped[str | None] = mapped_column(String(30))
+    recommended_action: Mapped[str | None] = mapped_column(String(100))
+    score_version: Mapped[str] = mapped_column(String(20), nullable=False)
+    recommendation_version: Mapped[str] = mapped_column(String(20), nullable=False)
+    confidence_level: Mapped[str | None] = mapped_column(String(20))
+    decision_confidence_score: Mapped[float | None] = mapped_column(Float)
+    generated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class DailyScoreComponent(Base):
+    """Individual subcomponent contributions for each score."""
+
+    __tablename__ = "daily_score_component"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    score_type: Mapped[str] = mapped_column(String(30), nullable=False)
+    component_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    raw_input_value: Mapped[float | None] = mapped_column(Float)
+    normalized_value: Mapped[float | None] = mapped_column(Float)
+    weighted_contribution: Mapped[float | None] = mapped_column(Float)
+    direction: Mapped[str] = mapped_column(String(10), nullable=False, default="neutral")
+
+
+class DailyReasonCode(Base):
+    """Structured warning/explanation codes for each day."""
+
+    __tablename__ = "daily_reason_code"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    code: Mapped[str] = mapped_column(String(50), nullable=False)
+    source: Mapped[str] = mapped_column(String(30), nullable=False)
+    severity: Mapped[str | None] = mapped_column(String(20))
+    detail: Mapped[str | None] = mapped_column(String(500))
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: field-level provenance
+# ---------------------------------------------------------------------------
+
+
+class DailyFieldProvenance(Base):
+    """Tracks which source provided each key metric field."""
+
+    __tablename__ = "daily_field_provenance"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    field_name: Mapped[str] = mapped_column(String(50), nullable=False)
+    source: Mapped[str] = mapped_column(String(50), nullable=False)
+    is_stale: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    staleness_days: Mapped[int | None] = mapped_column(Integer)
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: feedback capture
+# ---------------------------------------------------------------------------
+
+
+class DailyFeedback(Base):
+    """User feedback on daily recommendations."""
+
+    __tablename__ = "daily_feedback"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    rating: Mapped[str] = mapped_column(String(30), nullable=False)
+    free_text_note: Mapped[str | None] = mapped_column(Text)
+    recommendation_version: Mapped[str | None] = mapped_column(String(20))
+    actual_session_type: Mapped[str | None] = mapped_column(String(50))
+    next_day_outcome: Mapped[str | None] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: LLM audit log
+# ---------------------------------------------------------------------------
+
+
+class LLMAuditLog(Base):
+    """Logs LLM prompts/responses for trust and debugging."""
+
+    __tablename__ = "llm_audit_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    date: Mapped[date | None] = mapped_column(Date)
+    prompt_type: Mapped[str] = mapped_column(String(30), nullable=False)
+    context_json: Mapped[dict | None] = mapped_column(JSON)
+    model: Mapped[str] = mapped_column(String(50), nullable=False)
+    response_text: Mapped[str | None] = mapped_column(Text)
+    error: Mapped[str | None] = mapped_column(String(500))
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+# ---------------------------------------------------------------------------
+# Phase 2: CrossFit workout tags
+# ---------------------------------------------------------------------------
+
+
+class WorkoutTag(Base):
+    """Parsed tag for a workout session."""
+
+    __tablename__ = "workout_tag"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    workout_id: Mapped[str] = mapped_column(String(36), nullable=False, index=True)
+    tag: Mapped[str] = mapped_column(String(30), nullable=False)
+    confidence: Mapped[float] = mapped_column(Float, default=1.0)
+    is_manual_override: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")

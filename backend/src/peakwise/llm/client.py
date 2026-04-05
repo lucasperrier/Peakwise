@@ -25,6 +25,7 @@ class LLMResult:
     context_sent: dict[str, Any]
     model: str
     error: str | None = None
+    prompt_type: str | None = None
 
 
 # ---------------------------------------------------------------------------

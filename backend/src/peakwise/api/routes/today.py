@@ -14,9 +14,10 @@ from peakwise.api.schemas import (
     ScoresPayload,
     TodayResponse,
 )
-from peakwise.config import Settings
+from peakwise.config import RECOMMENDATION_ENGINE_VERSION, SCORE_ENGINE_VERSION, Settings
 from peakwise.llm.pipeline import explain_today
-from peakwise.models import RecommendationSnapshot, ScoreSnapshot
+from peakwise.models import DailyFact, RecommendationSnapshot, ScoreSnapshot
+from peakwise.trust import compute_decision_confidence
 
 logger = logging.getLogger("peakwise.api.today")
 
@@ -58,6 +59,10 @@ def get_today(
         subcomponents = score.subcomponents_json
         warnings = score.warnings_json
 
+    # Decision confidence
+    fact: DailyFact | None = db.get(DailyFact, target)
+    confidence_score, confidence_level = compute_decision_confidence(fact, target, db)
+
     # LLM explanation (best-effort)
     explanation = None
     if score is not None:
@@ -74,4 +79,8 @@ def get_today(
         subcomponents=subcomponents,
         warnings=warnings,
         explanation=explanation,
+        confidence_score=confidence_score,
+        confidence_level=confidence_level,
+        score_version=SCORE_ENGINE_VERSION,
+        recommendation_version=RECOMMENDATION_ENGINE_VERSION,
     )

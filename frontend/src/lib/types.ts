@@ -32,6 +32,10 @@ export interface TodayResponse {
   subcomponents: Record<string, Record<string, number | null>> | null;
   warnings: Record<string, boolean> | null;
   explanation: string | null;
+  confidence_score: number | null;
+  confidence_level: string | null;
+  score_version: string | null;
+  recommendation_version: string | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -188,4 +192,55 @@ export interface AskRequest {
 export interface AskResponse {
   answer: string | null;
   error: string | null;
+}
+
+// ---------------------------------------------------------------------------
+// POST /api/feedback
+// ---------------------------------------------------------------------------
+
+export interface FeedbackRequest {
+  date: string;
+  rating: "accurate" | "too_hard" | "too_easy" | "pain_increased" | "ignored";
+  free_text_note?: string;
+  actual_session_type?: string;
+  next_day_outcome?: string;
+}
+
+export interface FeedbackResponse {
+  id: number;
+  date: string;
+  rating: string;
+  created: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// GET /api/debug/day
+// ---------------------------------------------------------------------------
+
+export interface DebugDayResponse {
+  date: string;
+  daily_facts: Record<string, unknown> | null;
+  features: Record<string, unknown> | null;
+  workouts_in_lookback: Record<string, unknown>[];
+  baselines: Record<string, number | null>;
+  score_snapshot: Record<string, unknown> | null;
+  score_components: Array<{
+    score_type: string;
+    component_name: string;
+    raw_input_value: number | null;
+    normalized_value: number | null;
+    weighted_contribution: number | null;
+    direction: string;
+  }>;
+  reason_codes: Array<{
+    code: string;
+    source: string;
+    severity: string | null;
+    detail: string | null;
+  }>;
+  recommendation: Record<string, unknown> | null;
+  confidence: { score: number; level: string };
+  source_coverage: Record<string, boolean>;
+  field_provenance: Record<string, string | null>;
+  score_breakdown: Record<string, unknown> | null;
 }
