@@ -10,17 +10,17 @@ This task list is ordered so coding agents can work in bounded, testable increme
 ---
 
 ## Phase 0 - Repository and planning
-- [ ] Initialize repository structure
-- [ ] Create `README.md`
-- [ ] Add `docs/v1_scope.md`
-- [ ] Add `docs/data_model.md`
-- [ ] Add `docs/scoring.md`
-- [ ] Add `docs/bedrock_spec.md`
-- [ ] Define coding conventions and agent guardrails
-- [ ] Choose stack and document the decision
-- [ ] Configure linting and formatting
-- [ ] Configure testing framework
-- [ ] Create `.env.example`
+- [x] Initialize repository structure
+- [x] Create `README.md`
+- [x] Add `docs/v1_scope.md`
+- [x] Add `docs/data_model.md`
+- [x] Add `docs/scoring.md`
+- [x] Add `docs/bedrock_spec.md`
+- [x] Define coding conventions and agent guardrails
+- [x] Choose stack and document the decision
+- [x] Configure linting and formatting
+- [x] Configure testing framework
+- [x] Create `.env.example`
 
 ### Deliverable
 A repo with clear docs, tooling, and a stable implementation target.

@@ -72,4 +72,3 @@ Copy `.env.example` to `.env` and fill in the required values before running.
 - [Stack decision](docs/stack_decision.md)
 - [Conventions](docs/conventions.md)
 - [Task list](TASKS.md)
-# Peakwise
